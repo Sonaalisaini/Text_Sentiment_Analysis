@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sentiment Analysis App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Sentiment Analysis</h1>
+        <p>Enter text to analyze sentiment</p>
+
+        <textarea id="textInput" placeholder="Type your text here..."></textarea>
+        <button onclick="analyzeSentiment()">Analyze</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function analyzeSentiment() {
+            const text = document.getElementById("textInput").value;
+
+            if (text.trim() === "") {
+                alert("Please enter some text");
+                return;
+            }
+
+            fetch("/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        text: text
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("result").innerHTML =
+                        `<h3>Result</h3>
+             <p><strong>Sentiment:</strong> ${data.sentiment}</p>
+             <p><strong>Polarity Score:</strong> ${data.polarity}</p>`;
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        }
+    </script>
+
+</body>
+
+</html>
